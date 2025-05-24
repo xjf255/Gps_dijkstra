@@ -1,84 +1,67 @@
-package org.example.gps;
+package org.example.gps.Model;
+
+import org.example.gps.Utils.DestinationTypes;
+
+import java.util.ArrayList;
 
 public class Nodo {
     private String nombre;
     int id;
-    int destino;
-    int peso;
+    DestinationTypes type;
     private double latitud;
     private double longitud;
     private double altura;
+    ArrayList<Nodo> destino;
+    int peso; // creo que no nos servira
     private boolean visitado;  // visitado o activo
     private double x;
     private double y;
 
-    public Nodo(String nombre, double latitud, double longitud, double altura, boolean vas, double x, double y,int destino,int peso) {
-        this.nombre = nombre;
-        this.latitud = latitud;
-        this.longitud = longitud;
-        this.altura = altura;
-        this.visitado = vas;
-        this.x = x;
-        this.y = y;
-        this.destino=destino;
-        this.peso=peso;
+    public Nodo() {
+        destino = new ArrayList<>();
     }
+
     //HACER METODO CALCULAR DISTANCIA
-    public int compararnodo(Nodo otro){
+    public int compararnodo(Nodo otro) {
         return Integer.compare(this.peso, otro.peso);
     }
 
-    public enum Restaurantes {
-        PolloCampero,
-        McDonalds,
-        BurgerKing,
-        TacoBell,
-        LaFondaDeLaCalleReal,
-        Welten,
-        Fridas
+    public int getId() {
+        return id;
     }
 
-    public enum universidades{
-        umg,
-        usac,
-        url,
-        uvg,
-        unphu
+    public void setId(int id) {
+        this.id = id;
     }
 
-    public enum hoteles{
-        hotelAntigua,
-        PortaHotelAntigua,
-        HotelCaminoRealAntigua,
-        HotelCasaSantoDomingo,
-        ElConventoBoutiqueHotel,
-        GoodHotelAntigua
-    }
-
-    public enum tiendas{
-        LaTorre,
-        Walmart,
-        Cemaco,
-        Siman,
-        MaxiDespensa,
-        TiendaDeBarrio,
-        FarmaciaGaleno,
-        LibreriaProgreso
-    }
-
-    public int getdestino() {
+    public ArrayList<Nodo> getDestino() {
         return destino;
     }
 
-    public void setdestino(int destino) {
-        this.destino = destino;
+    public void pushDestino(Nodo destino) {
+        this.destino.add(destino);
     }
+
+    public void setPeso(int peso) {
+        this.peso = peso;
+    }
+
+    public DestinationTypes getType() {
+        return type;
+    }
+
+    public void setType(DestinationTypes type) {
+        this.type = type;
+    }
+
     public int getPeso() {
         return peso;
     }
+
     public void setpeso(int peso) {
         this.peso = peso;
     }
+
     public String getNombre() {
         return nombre;
     }
