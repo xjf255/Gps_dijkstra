@@ -2,6 +2,9 @@ package org.example.gps;
 
 public class Nodo {
     private String nombre;
+    int id;
+    int destino;
+    int peso;
     private double latitud;
     private double longitud;
     private double altura;
@@ -9,7 +12,7 @@ public class Nodo {
     private double x;
     private double y;
 
-    public Nodo(String nombre, double latitud, double longitud, double altura, boolean vas, double x, double y) {
+    public Nodo(String nombre, double latitud, double longitud, double altura, boolean vas, double x, double y,int destino,int peso) {
         this.nombre = nombre;
         this.latitud = latitud;
         this.longitud = longitud;
@@ -17,8 +20,65 @@ public class Nodo {
         this.visitado = vas;
         this.x = x;
         this.y = y;
+        this.destino=destino;
+        this.peso=peso;
+    }
+    //HACER METODO CALCULAR DISTANCIA
+    public int compararnodo(Nodo otro){
+        return Integer.compare(this.peso, otro.peso);
     }
 
+    public enum Restaurantes {
+        PolloCampero,
+        McDonalds,
+        BurgerKing,
+        TacoBell,
+        LaFondaDeLaCalleReal, // Ejemplo local de Antigua
+        Welten, // Ejemplo local de Antigua
+        Fridas
+    }
+
+    public enum universidades{
+        umg, // Universidad Mariano Gálvez
+        usac, // Universidad de San Carlos de Guatemala
+        url, // Universidad Rafael Landívar
+        uvg, // Universidad del Valle de Guatemala
+        unphu // Si aplica para otro contexto (ejemplo genérico)
+    }
+
+    public enum hoteles{
+        hotelAntigua,
+        PortaHotelAntigua,
+        HotelCaminoRealAntigua,
+        HotelCasaSantoDomingo,
+        ElConventoBoutiqueHotel,
+        GoodHotelAntigua
+    }
+
+    public enum tiendas{
+        LaTorre, // Supermercado
+        Walmart,
+        Cemaco, // Tienda por departamento
+        Siman, // Tienda por departamento
+        MaxiDespensa, // Supermercado
+        TiendaDeBarrio, // Genérico para tiendas pequeñas
+        FarmaciaGaleno, // Farmacia
+        LibreriaProgreso // Librería
+    }
+
+    public int getdestino() {
+        return destino;
+    }
+
+    public void setdestino(int destino) {
+        this.destino = destino;
+    }
+    public int getPeso() {
+        return peso;
+    }
+    public void setpeso(int peso) {
+        this.peso = peso;
+    }
     public String getNombre() {
         return nombre;
     }
