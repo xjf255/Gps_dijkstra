@@ -33,17 +33,17 @@ public class Nodo {
         McDonalds,
         BurgerKing,
         TacoBell,
-        LaFondaDeLaCalleReal, // Ejemplo local de Antigua
-        Welten, // Ejemplo local de Antigua
+        LaFondaDeLaCalleReal,
+        Welten,
         Fridas
     }
 
     public enum universidades{
-        umg, // Universidad Mariano Gálvez
-        usac, // Universidad de San Carlos de Guatemala
-        url, // Universidad Rafael Landívar
-        uvg, // Universidad del Valle de Guatemala
-        unphu // Si aplica para otro contexto (ejemplo genérico)
+        umg,
+        usac,
+        url,
+        uvg,
+        unphu
     }
 
     public enum hoteles{
@@ -56,14 +56,14 @@ public class Nodo {
     }
 
     public enum tiendas{
-        LaTorre, // Supermercado
+        LaTorre,
         Walmart,
-        Cemaco, // Tienda por departamento
-        Siman, // Tienda por departamento
-        MaxiDespensa, // Supermercado
-        TiendaDeBarrio, // Genérico para tiendas pequeñas
-        FarmaciaGaleno, // Farmacia
-        LibreriaProgreso // Librería
+        Cemaco,
+        Siman,
+        MaxiDespensa,
+        TiendaDeBarrio,
+        FarmaciaGaleno,
+        LibreriaProgreso
     }
 
     public int getdestino() {
