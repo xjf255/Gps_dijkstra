@@ -5,25 +5,26 @@ import org.example.gps.Utils.DestinationTypes;
 import java.util.ArrayList;
 
 public class Nodo {
-    private String nombre;
     int id;
+    private String nombre;
     DestinationTypes type;
     private double latitud;
     private double longitud;
     private double altura;
     ArrayList<Nodo> destino;
-    int peso; // creo que no nos servira
     private boolean visitado;  // visitado o activo
-    private double x;
-    private double y;
+
+    public Nodo( int id,String nombre, DestinationTypes type, double latitud, double longitud, double altura) {
+        this.nombre = nombre;
+        this.id = id;
+        this.type = type;
+        this.latitud = latitud;
+        this.longitud = longitud;
+        this.altura = altura;
+    }
 
     public Nodo() {
         destino = new ArrayList<>();
-    }
-
-    //HACER METODO CALCULAR DISTANCIA
-    public int compararnodo(Nodo otro) {
-        return Integer.compare(this.peso, otro.peso);
     }
 
     public int getId() {
@@ -42,25 +43,11 @@ public class Nodo {
         this.destino.add(destino);
     }
 
-    public void setPeso(int peso) {
-        this.peso = peso;
-    }
-
     public DestinationTypes getType() {
         return type;
     }
 
-    public void setType(DestinationTypes type) {
-        this.type = type;
-    }
-
-    public int getPeso() {
-        return peso;
-    }
-
-    public void setpeso(int peso) {
-        this.peso = peso;
-    }
+    public void setType(DestinationTypes type) {this.type = type;}
 
     public String getNombre() {
         return nombre;
@@ -102,22 +89,6 @@ public class Nodo {
         this.visitado = vas;
     }
 
-    public double getX() {
-        return x;
-    }
-
-    public void setX(double x) {
-        this.x = x;
-    }
-
-    public double getY() {
-        return y;
-    }
-
-    public void setY(double y) {
-        this.y = y;
-    }
-
     @Override
     public String toString() {
         return "Nodo{" +
@@ -125,9 +96,7 @@ public class Nodo {
                 ", latitud=" + latitud +
                 ", longitud=" + longitud +
                 ", altura=" + altura +
-                ", vas=" + visitado +
-                ", x=" + x +
-                ", y=" + y +
+                ", visitado=" + visitado +
                 '}';
     }
 }

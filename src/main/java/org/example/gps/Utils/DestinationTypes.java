@@ -6,4 +6,5 @@ public enum DestinationTypes {
     PARKING,
     MALL,
     SCHOOL,
+    HOSPITAL
 }

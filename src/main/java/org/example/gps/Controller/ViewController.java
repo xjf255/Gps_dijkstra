@@ -13,7 +13,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 
 public class ViewController {
-    Graph graph;
+    Graph graph = new Graph();
     @FXML
     private TextField fileNameTextField;
 
@@ -31,7 +31,7 @@ public class ViewController {
 
         File selectedFile = fileChooser.showOpenDialog(primaryStage);
         if (selectedFile != null) {
-            graph.generateAboutFile(selectedFile);
+            graph.generateAboutFile();
         }
     }
 }
