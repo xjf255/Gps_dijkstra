@@ -4,10 +4,14 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox alignment="CENTER" spacing="20.0" xmlns:fx="http://javafx.com/fxml">
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.cell.TextFieldListCell?>
+<?import javafx.scene.control.TextField?>
+<VBox alignment="CENTER" spacing="20.0" xmlns:fx="http://javafx.com/fxml" fx:controller="org.example.gps.Controller.ViewController">
     <padding>
         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
     </padding>
-
-    <Label fx:id="welcomeText"/>
+    <VBox></VBox>
+    <Button onAction="#onLoadFile">Load Files</Button>
+    <TextField fx:id="fileNameTextField"/>
 </VBox>
