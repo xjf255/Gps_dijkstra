@@ -1,10 +1,13 @@
 package org.example.gps.Model;
 
-import org.example.gps.Utils.DestinationTypes;
+import org.example.gps.Utils.*;
 import java.time.LocalDate;
 import java.util.HashMap;
 
 public class Graph {
+    private HashMap<Integer, Nodo> mapNodo;
+    private HashMap<Integer, Integer> mapAdyacencia;
+
     HashMap<String, Nodo> graph = new HashMap<>();
     private static final HashMap<String, Double> DAY_TRAFFIC_MULTIPLIER = new HashMap<>();
 
@@ -92,5 +95,27 @@ public class Graph {
         Nodo n2 = new Nodo(2,"Nombre_2",DestinationTypes.RESTAURANT,19.421727,-99.132586,2242.0);
         System.out.println(getTimeBetweenNodesInMinutes(n1,n2,20,4));
         // TODO: Implementation for file generation
+    }
+
+    public void getInfoCSV(){
+        /*
+        1- Lee los CSV de Resources y guarda los datos en HashMaps a travez de la Clase "ReadFileCSV"
+        2- Cada CSV se guarda en Hashmaps distintos
+         */
+        ReadFileCSV mapBase = new ReadFileCSV();
+        mapNodo = mapBase.readCSVNodo();
+        mapAdyacencia = mapBase.readCSVAdyacencia();
+
+        /* //Logica basica para mostrar la info en los HashMaps
+        ReadFileCSV mapita = new ReadFileCSV();
+        HashMap<Integer, Nodo> mapNodo = mapita.readCSVNodo();
+        HashMap<Integer, Integer> mapAdyacencia = mapita.readCSVAdyacencia();
+
+        System.out.println("[InfoMain001]"+ mapNodo.keySet()); //Este Muestra todos los Key del HashMap
+        System.out.println("[InfoMain002]"+ mapNodo.values()); //Este Muestra todos los Values del HashMap
+
+        System.out.println("[InfoMain003]"+mapAdyacencia.keySet()); //Lo mismo que arriba
+        System.out.println("[InfoMain004]"+mapAdyacencia.values()); //Lo mismo que arriba
+         */
     }
 }
