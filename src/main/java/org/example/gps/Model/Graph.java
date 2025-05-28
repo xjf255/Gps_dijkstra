@@ -1,6 +1,8 @@
 package org.example.gps.Model;
 
 import org.example.gps.Utils.*;
+
+import java.io.File;
 import java.time.LocalDate;
 import java.util.HashMap;
 
@@ -97,14 +99,14 @@ public class Graph {
         // TODO: Implementation for file generation
     }
 
-    public void getInfoCSV(){
+    public void getInfoCSVNodo(File archive){
         /*
         1- Lee los CSV de Resources y guarda los datos en HashMaps a travez de la Clase "ReadFileCSV"
         2- Cada CSV se guarda en Hashmaps distintos
          */
         ReadFileCSV mapBase = new ReadFileCSV();
-        mapNodo = mapBase.readCSVNodo();
-        mapAdyacencia = mapBase.readCSVAdyacencia();
+
+        mapNodo = mapBase.readCSVNodo(archive);
 
         /* //Logica basica para mostrar la info en los HashMaps
         ReadFileCSV mapita = new ReadFileCSV();
@@ -117,5 +119,10 @@ public class Graph {
         System.out.println("[InfoMain003]"+mapAdyacencia.keySet()); //Lo mismo que arriba
         System.out.println("[InfoMain004]"+mapAdyacencia.values()); //Lo mismo que arriba
          */
+    }
+
+    public void getInfoCSVAdyacencia(File archive){
+        ReadFileCSV mapBase = new ReadFileCSV();
+        mapAdyacencia = mapBase.readCSVAdyacencia(archive);
     }
 }

@@ -6,7 +6,7 @@ import javafx.scene.Node;
 import javafx.scene.control.TextField;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import org.example.gps.Model.Graph;
+import org.example.gps.Model.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -31,7 +31,8 @@ public class ViewController {
 
         File selectedFile = fileChooser.showOpenDialog(primaryStage);
         if (selectedFile != null) {
-            graph.generateAboutFile();
+            graph.getInfoCSVNodo(selectedFile);
+            //graph.generateAboutFile();
         }
     }
 }
