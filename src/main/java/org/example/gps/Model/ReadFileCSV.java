@@ -67,6 +67,10 @@ public class ReadFileCSV {
                 //System.out.println("[Info003]:"+line);
                 String[] split = line.split(",");
                 //System.out.println("Origen:"+split[0]+", Destino:"+split[1]);
+                Nodo ogn = mapitaNodo.get(Integer.parseInt(split[0]));
+                Nodo dst = mapitaNodo.get(Integer.parseInt(split[1]));
+                ogn.pushDestino(dst);
+                mapitaNodo.put(Integer.parseInt(split[0]),ogn);
                 int origen = Integer.parseInt(split[0]);
                 int destino = Integer.parseInt(split[1]);
                 //System.out.println("[Info004]"+"Origen:"+origen+", Destino:"+destino);

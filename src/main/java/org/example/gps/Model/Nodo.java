@@ -20,6 +20,8 @@ public class Nodo {
         this.type = type;
         this.latitud = latitud;
         this.longitud = longitud;
+        this.destino = new ArrayList<Nodo>();
+        this.visitado = false;
         this.altura = altura;
     }
 

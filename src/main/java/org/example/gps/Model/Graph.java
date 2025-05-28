@@ -1,12 +1,18 @@
 package org.example.gps.Model;
 
+import Model.Stack;
 import org.example.gps.Utils.*;
+
+import java.io.File;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class Graph {
     private HashMap<Integer, Nodo> mapNodo;
     private HashMap<Integer, Integer> mapAdyacencia;
+    private Stack stack = new Stack();
 
     HashMap<String, Nodo> graph = new HashMap<>();
     private static final HashMap<String, Double> DAY_TRAFFIC_MULTIPLIER = new HashMap<>();
