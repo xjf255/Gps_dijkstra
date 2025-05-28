@@ -1,10 +1,8 @@
 package org.example.gps.Model;
 
 import org.example.gps.Utils.*;
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
+
+import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -18,11 +16,10 @@ public class ReadFileCSV {
     }
 
     //Para leer CSV de Nodos
-    public HashMap<Integer,Nodo> readCSVNodo(){
+    public HashMap<Integer,Nodo> readCSVNodo(File archive){
         Nodo nodo;
-        String pathArchive = "src/main/resources/mocks/nodos.csv";
 
-         try(BufferedReader br = new BufferedReader(new FileReader(pathArchive))) {
+         try(BufferedReader br = new BufferedReader(new FileReader(archive))) {
              String line;
 
              //Para leer la primera linea (los encabezados vaya)
@@ -39,7 +36,7 @@ public class ReadFileCSV {
                  double latitud = Double.parseDouble(split[3]);
                  double longitud = Double.parseDouble(split[4]);
                  double altura = Double.parseDouble(split[5]);
-                 //System.out.println("[Info002]"+id+", "+name+", "+type+", "+latitud+", "+longitud+", "+altura);
+                 System.out.println("[Info002]"+id+", "+name+", "+type+", "+latitud+", "+longitud+", "+altura);
                  nodo = new Nodo(id,name,type,latitud,longitud,altura);
                  mapitaNodo.put(id,nodo);
              }
@@ -53,10 +50,9 @@ public class ReadFileCSV {
     }
 
     //Para los CSV de Adyacencias
-    public HashMap<Integer, Integer> readCSVAdyacencia(){
-        String pathArchive = "src/main/resources/mocks/adyacencias.csv";
+    public HashMap<Integer, Integer> readCSVAdyacencia(File archive){
 
-        try(BufferedReader br = new BufferedReader(new FileReader(pathArchive))) {
+        try(BufferedReader br = new BufferedReader(new FileReader(archive))) {
             String line;
 
             //Para leer la primera linea (los encabezados vaya)
@@ -64,6 +60,7 @@ public class ReadFileCSV {
 
             //Empieza a leer linea por linea y guarda en HashMap
             while ((line = br.readLine()) != null){
+
                 //System.out.println("[Info003]:"+line);
                 String[] split = line.split(",");
                 //System.out.println("Origen:"+split[0]+", Destino:"+split[1]);

@@ -1,6 +1,6 @@
 package org.example.gps.Model;
 
-import org.example.gps.Utils.DestinationTypes;
+import org.example.gps.Utils.*;
 
 import java.util.ArrayList;
 
