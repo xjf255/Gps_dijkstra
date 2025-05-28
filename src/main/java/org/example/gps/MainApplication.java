@@ -5,7 +5,9 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
+import org.example.gps.Model.*;
 import java.io.IOException;
+import java.util.HashMap;
 
 public class MainApplication extends Application {
     @Override
