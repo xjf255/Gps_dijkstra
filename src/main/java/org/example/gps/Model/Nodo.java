@@ -94,11 +94,11 @@ public class Nodo {
     @Override
     public String toString() {
         return "Nodo{" +
-                "nombre='" + nombre + '\'' +
-                ", latitud=" + latitud +
-                ", longitud=" + longitud +
-                ", altura=" + altura +
-                ", visitado=" + visitado +
+                "visitado=" + visitado +
+                ", type=" + type +
+                ", nombre='" + nombre + '\'' +
+                ", id=" + id +
+                ", destino=" + destino.size() +
                 '}';
     }
 }

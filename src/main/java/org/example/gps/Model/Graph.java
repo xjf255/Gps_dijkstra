@@ -1,21 +1,14 @@
 package org.example.gps.Model;
 
-import Model.Stack;
-import org.example.gps.Utils.*;
-
+import org.example.gps.Utils.DestinationTypes;
 import java.io.File;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 public class Graph {
     private HashMap<Integer, Nodo> mapNodo;
-    private HashMap<Integer, Integer> mapAdyacencia;
-    private Stack stack = new Stack();
-
-    HashMap<String, Nodo> graph = new HashMap<>();
     private static final HashMap<String, Double> DAY_TRAFFIC_MULTIPLIER = new HashMap<>();
+    ReadFileCSV mapBase = new ReadFileCSV();
 
     static {
         DAY_TRAFFIC_MULTIPLIER.put("MONDAY", 2.0);
@@ -85,7 +78,7 @@ public class Graph {
         return baseSpeed / trafficFactor;
     }
 
-    private double getTimeBetweenNodes(Nodo n1, Nodo n2, double hour, double baseSpeed) {
+    public double getTimeBetweenNodes(Nodo n1, Nodo n2, double hour, double baseSpeed) {
         double distance = getDistance(n1.getLatitud(), n1.getLongitud(), n2.getLatitud(), n2.getLongitud());
         double effectiveSpeed = getSpeed(baseSpeed, hour, n1);
         System.out.println(distance + "-" +effectiveSpeed);
@@ -96,19 +89,166 @@ public class Graph {
         return getTimeBetweenNodes(n1, n2, currentHour,baseSpeed) * 60.0;
     }
 
-    public void generateAboutFile() {
-        Nodo n1 = new Nodo(1,"Nombre_1",DestinationTypes.PARKING,19.426142,-99.149704,2236.9);
-        Nodo n2 = new Nodo(2,"Nombre_2",DestinationTypes.RESTAURANT,19.421727,-99.132586,2242.0);
-        System.out.println(getTimeBetweenNodesInMinutes(n1,n2,20,4));
-        // TODO: Implementation for file generation
+    public List<Nodo> dijkstraResolution(int start, int end, double baseSpeed, int hour) {
+        if (mapNodo == null || mapNodo.isEmpty()) {
+            System.out.println("Error: Graph is not loaded. Please load nodes first");
+            return new ArrayList<>();
+        }
+
+        if (!mapNodo.containsKey(start) || !mapNodo.containsKey(end)) {
+            System.out.println("Error: Start or end node not found in graph");
+            return new ArrayList<>();
+        }
+
+        Map<Integer, Double> distances = new HashMap<>();
+        // Previous node map for path reconstruction
+        Map<Integer, Nodo> previous = new HashMap<>();
+        // Priority queue to always process the closest unvisited node
+        PriorityQueue<NodeDistance> pq = new PriorityQueue<>(
+                Comparator.comparingDouble(nd -> nd.distance)
+        );
+        // Track visited nodes
+        Set<Integer> visited = new HashSet<>();
+
+        // Initialize distances
+        for (Integer nodeId : mapNodo.keySet()) {
+            distances.put(nodeId, Double.MAX_VALUE);
+        }
+
+        // Start node has distance 0
+        distances.put(start, 0.0);
+        pq.offer(new NodeDistance(mapNodo.get(start), 0.0));
+
+        while (!pq.isEmpty()) {
+            NodeDistance current = pq.poll();
+            Nodo currentNode = current.node;
+            int currentId = currentNode.getId();
+
+            // Skip if already visited
+            if (visited.contains(currentId)) {
+                continue;
+            }
+
+            visited.add(currentId);
+
+            // If we reached the destination, we can stop
+            if (currentId == end) {
+                break;
+            }
+
+            // Check all adjacent nodes
+            ArrayList<Nodo> adjacencies = currentNode.getDestino();
+            if (adjacencies != null) {
+                for (Nodo neighbor : adjacencies) {
+                    int neighborId = neighbor.getId();
+
+                    if (visited.contains(neighborId)) {
+                        continue;
+                    }
+
+                    // Calculate time to reach this neighbor using your method
+                    double travelTime = getTimeBetweenNodesInMinutes(
+                            currentNode, neighbor, baseSpeed, hour
+                    );
+                    double newDistance = distances.get(currentId) + travelTime;
+
+                    // If we found a shorter path, update it
+                    if (newDistance < distances.get(neighborId)) {
+                        distances.put(neighborId, newDistance);
+                        previous.put(neighborId, currentNode);
+                        pq.offer(new NodeDistance(neighbor, newDistance));
+                    }
+                }
+            }
+        }
+
+        // Reconstruct path from end to start
+        return reconstructPath(previous, start, end);
     }
+
+    private List<Nodo> reconstructPath(Map<Integer, Nodo> previous, int start, int end) {
+        List<Nodo> path = new ArrayList<>();
+        Integer current = end;
+
+        // Build path backwards from end to start
+        while (current != null) {
+            if (current == start) {
+                path.add(mapNodo.get(start));
+                break;
+            }
+
+            Nodo prevNode = previous.get(current);
+            if (prevNode == null) {
+                // No path exists
+                System.out.println("No path found between nodes " + start + " and " + end);
+                return new ArrayList<>();
+            }
+
+            path.add(mapNodo.get(current));
+            current = prevNode.getId();
+        }
+
+        // Reverse to get path from start to end
+        Collections.reverse(path);
+        return path;
+    }
+
+    // Helper class for priority queue
+    private static class NodeDistance {
+        Nodo node;
+        double distance;
+
+        NodeDistance(Nodo node, double distance) {
+            this.node = node;
+            this.distance = distance;
+        }
+    }
+
+    // METHOD TO FIND AND PRINT SHORTEST PATH
+    public void findAndPrintShortestPath(int startId, int endId, double baseSpeed, int hour) {
+        System.out.println("\n=== FINDING SHORTEST PATH ===");
+        System.out.println("From: " + startId + " To: " + endId);
+        System.out.println("Base Speed: " + baseSpeed + " km/h, Hour: " + hour);
+
+        List<Nodo> shortestPath = dijkstraResolution(startId, endId, baseSpeed, hour);
+
+        if (shortestPath.isEmpty()) {
+            System.out.println("No path found between the nodes!");
+            return;
+        }
+
+        System.out.println("\n--- SHORTEST PATH FOUND ---");
+        double totalTime = 0.0;
+
+        for (int i = 0; i < shortestPath.size(); i++) {
+            Nodo node = shortestPath.get(i);
+            System.out.println((i + 1) + ". " + node.getNombre() +
+                    " (ID: " + node.getId() +
+                    ", Type: " + node.getType() + ")");
+
+            // Calculate time to next node
+            if (i < shortestPath.size() - 1) {
+                Nodo nextNode = shortestPath.get(i + 1);
+                double segmentTime = getTimeBetweenNodesInMinutes(node, nextNode, baseSpeed, hour);
+                totalTime += segmentTime;
+                System.out.println("   → Time to next: " + String.format("%.2f", segmentTime) + " minutes");
+            }
+        }
+
+        System.out.println("\nTotal travel time: " + String.format("%.2f", totalTime) + " minutes");
+        System.out.println("=== END PATH ===\n");
+    }
+
 
     public void getInfoCSVNodo(File archive){
         /*
         1- Lee los CSV de Resources y guarda los datos en HashMaps a travez de la Clase "ReadFileCSV"
         2- Cada CSV se guarda en Hashmaps distintos
          */
-        ReadFileCSV mapBase = new ReadFileCSV();
+        if(mapNodo == null){
+            System.out.println("Error: Load nodes");
+            return;
+        }
 
         mapNodo = mapBase.readCSVNodo(archive);
 
@@ -126,7 +266,10 @@ public class Graph {
     }
 
     public void getInfoCSVAdyacencia(File archive){
-        ReadFileCSV mapBase = new ReadFileCSV();
-        mapAdyacencia = mapBase.readCSVAdyacencia(archive);
+        mapNodo = mapBase.readCSVAdyacencia(archive);
+
+        for (Nodo node : mapNodo.values()) {
+            System.out.println(node.toString());
+        }
     }
 }

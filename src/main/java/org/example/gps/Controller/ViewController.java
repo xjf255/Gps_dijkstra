@@ -35,4 +35,23 @@ public class ViewController {
             //graph.generateAboutFile();
         }
     }
+
+    @FXML
+    protected void onLoadAdy(ActionEvent event) {
+        // Get the stage from the event source
+        Stage primaryStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Select a text file");
+        fileChooser.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("Text Files", "*.csv"),
+                new FileChooser.ExtensionFilter("All Files", "*.*")
+        );
+
+        File selectedFile = fileChooser.showOpenDialog(primaryStage);
+        if (selectedFile != null) {
+            graph.getInfoCSVAdyacencia(selectedFile);
+            //graph.generateAboutFile();
+        }
+    }
 }
