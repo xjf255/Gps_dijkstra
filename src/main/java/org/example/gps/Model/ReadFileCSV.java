@@ -8,11 +8,9 @@ import java.util.Map;
 
 public class ReadFileCSV {
     private Map<Integer, Nodo> mapitaNodo;
-    private Map<Integer, Integer> mapitaAdyacencia;
 
     public ReadFileCSV(){
         this.mapitaNodo = new HashMap<>();
-        this.mapitaAdyacencia = new HashMap<>();
     }
 
     //Para leer CSV de Nodos
@@ -50,7 +48,7 @@ public class ReadFileCSV {
     }
 
     //Para los CSV de Adyacencias
-    public HashMap<Integer, Integer> readCSVAdyacencia(File archive){
+    public HashMap<Integer, Nodo> readCSVAdyacencia(File archive){
 
         try(BufferedReader br = new BufferedReader(new FileReader(archive))) {
             String line;
@@ -64,12 +62,12 @@ public class ReadFileCSV {
                 //System.out.println("[Info003]:"+line);
                 String[] split = line.split(",");
                 //System.out.println("Origen:"+split[0]+", Destino:"+split[1]);
-                int origen = Integer.parseInt(split[0]);
-                int destino = Integer.parseInt(split[1]);
-                //System.out.println("[Info004]"+"Origen:"+origen+", Destino:"+destino);
-                mapitaAdyacencia.put(origen, destino);
+                Nodo ogn = mapitaNodo.get(Integer.parseInt(split[0]));
+                Nodo dst = mapitaNodo.get(Integer.parseInt(split[1]));
+                ogn.pushDestino(dst);
+                mapitaNodo.put(Integer.parseInt(split[0]),ogn);
             }
-            return (HashMap<Integer, Integer>) mapitaAdyacencia;
+            return (HashMap<Integer, Nodo>) mapitaNodo;
         } catch (FileNotFoundException e) {
             System.out.println("[ERRORFILE001]:"+e);
         } catch (IOException e) {
