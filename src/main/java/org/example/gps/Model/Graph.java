@@ -81,7 +81,6 @@ public class Graph {
     public double getTimeBetweenNodes(Nodo n1, Nodo n2, double hour, double baseSpeed) {
         double distance = getDistance(n1.getLatitud(), n1.getLongitud(), n2.getLatitud(), n2.getLongitud());
         double effectiveSpeed = getSpeed(baseSpeed, hour, n1);
-        System.out.println(distance + "-" +effectiveSpeed);
         return distance / effectiveSpeed;
     }
 
@@ -90,16 +89,19 @@ public class Graph {
     }
 
     public List<Nodo> dijkstraResolution(int start, int end, double baseSpeed, int hour) {
+        // Verify mapNodo
         if (mapNodo == null || mapNodo.isEmpty()) {
             System.out.println("Error: Graph is not loaded. Please load nodes first");
             return new ArrayList<>();
         }
 
+        // Verify Nodo start & Nodo end
         if (!mapNodo.containsKey(start) || !mapNodo.containsKey(end)) {
             System.out.println("Error: Start or end node not found in graph");
             return new ArrayList<>();
         }
 
+        // to save all the distances traveled
         Map<Integer, Double> distances = new HashMap<>();
         // Previous node map for path reconstruction
         Map<Integer, Nodo> previous = new HashMap<>();
@@ -146,7 +148,7 @@ public class Graph {
                         continue;
                     }
 
-                    // Calculate time to reach this neighbor using your method
+                    // Calculate time
                     double travelTime = getTimeBetweenNodesInMinutes(
                             currentNode, neighbor, baseSpeed, hour
                     );
@@ -193,18 +195,6 @@ public class Graph {
         return path;
     }
 
-    // Helper class for priority queue
-    private static class NodeDistance {
-        Nodo node;
-        double distance;
-
-        NodeDistance(Nodo node, double distance) {
-            this.node = node;
-            this.distance = distance;
-        }
-    }
-
-    // METHOD TO FIND AND PRINT SHORTEST PATH
     public void findAndPrintShortestPath(int startId, int endId, double baseSpeed, int hour) {
         System.out.println("\n=== FINDING SHORTEST PATH ===");
         System.out.println("From: " + startId + " To: " + endId);
@@ -245,10 +235,6 @@ public class Graph {
         1- Lee los CSV de Resources y guarda los datos en HashMaps a travez de la Clase "ReadFileCSV"
         2- Cada CSV se guarda en Hashmaps distintos
          */
-        if(mapNodo == null){
-            System.out.println("Error: Load nodes");
-            return;
-        }
 
         mapNodo = mapBase.readCSVNodo(archive);
 

@@ -37,6 +37,11 @@ public class ViewController {
     }
 
     @FXML
+    protected void onFindRuta() {
+        graph.findAndPrintShortestPath(1,9,20,4);
+    }
+
+    @FXML
     protected void onLoadAdy(ActionEvent event) {
         // Get the stage from the event source
         Stage primaryStage = (Stage) ((Node) event.getSource()).getScene().getWindow();

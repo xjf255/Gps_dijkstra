@@ -9,6 +9,7 @@
         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
     </padding>
     <VBox></VBox>
+    <Button onAction="#onFindRuta">find</Button>
     <Button onAction="#onLoadFile">Load Files</Button>
     <Button onAction="#onLoadAdy">Load Files ady</Button>
     <TextField fx:id="fileNameTextField"/>
