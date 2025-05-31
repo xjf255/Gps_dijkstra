@@ -1,6 +1,6 @@
 package org.example.gps.Model;
 
-import org.example.gps.Utils.DestinationTypes;
+import org.example.gps.Utils.DestinationTypes; // Asegúrate que este import sea correcto si Utils está en el mismo nivel que Model
 import java.io.File;
 import java.time.LocalDate;
 import java.util.*;
@@ -19,6 +19,12 @@ public class Graph {
         DAY_TRAFFIC_MULTIPLIER.put("SATURDAY", 1.0);
         DAY_TRAFFIC_MULTIPLIER.put("SUNDAY", 1.0);
     }
+
+    // MÉTODO GETTER AÑADIDO AQUÍ
+    public HashMap<Integer, Nodo> getMapNodo() {
+        return this.mapNodo;
+    }
+    // FIN DEL MÉTODO GETTER AÑADIDO
 
     private double getDistance(double lat1, double lon1, double lat2, double lon2) {
         double R = 6371e3; // metres
@@ -53,6 +59,8 @@ public class Graph {
     }
 
     private double getLocationTrafficMultiplier(Nodo node) {
+        // Asegurarse de que node no sea null antes de llamar a getType()
+        if (node == null) return 1.0;
         DestinationTypes nodeType = node.getType();
 
         if (nodeType == null) return 1.0;
@@ -79,8 +87,14 @@ public class Graph {
     }
 
     public double getTimeBetweenNodes(Nodo n1, Nodo n2, double hour, double baseSpeed) {
+        // Asegurarse de que n1 y n2 no sean null
+        if (n1 == null || n2 == null) {
+            System.err.println("Error: Uno o ambos nodos son null en getTimeBetweenNodes.");
+            return Double.MAX_VALUE; // O manejar el error de otra forma
+        }
         double distance = getDistance(n1.getLatitud(), n1.getLongitud(), n2.getLatitud(), n2.getLongitud());
-        double effectiveSpeed = getSpeed(baseSpeed, hour, n1);
+        double effectiveSpeed = getSpeed(baseSpeed, hour, n1); // El tráfico se basa en el nodo de origen
+        if (effectiveSpeed == 0) return Double.MAX_VALUE; // Evitar división por cero
         return distance / effectiveSpeed;
     }
 
@@ -89,73 +103,68 @@ public class Graph {
     }
 
     public List<Nodo> dijkstraResolution(int start, int end, double baseSpeed, int hour) {
-        // Verify mapNodo
         if (mapNodo == null || mapNodo.isEmpty()) {
-            System.out.println("Error: Graph is not loaded. Please load nodes first");
+            System.out.println("Error: El grafo (mapNodo) no está cargado. Por favor, carga los nodos primero.");
             return new ArrayList<>();
         }
 
-        // Verify Nodo start & Nodo end
         if (!mapNodo.containsKey(start) || !mapNodo.containsKey(end)) {
-            System.out.println("Error: Start or end node not found in graph");
+            System.out.println("Error: El nodo de inicio o fin no se encuentra en el grafo. Inicio: " + start + ", Fin: " + end);
             return new ArrayList<>();
         }
 
-        // to save all the distances traveled
         Map<Integer, Double> distances = new HashMap<>();
-        // Previous node map for path reconstruction
         Map<Integer, Nodo> previous = new HashMap<>();
-        // Priority queue to always process the closest unvisited node
-        PriorityQueue<NodeDistance> pq = new PriorityQueue<>(
-                Comparator.comparingDouble(nd -> nd.distance)
-        );
-        // Track visited nodes
+        PriorityQueue<NodeDistance> pq = new PriorityQueue<>(Comparator.comparingDouble(nd -> nd.distance));
         Set<Integer> visited = new HashSet<>();
 
-        // Initialize distances
         for (Integer nodeId : mapNodo.keySet()) {
             distances.put(nodeId, Double.MAX_VALUE);
         }
 
-        // Start node has distance 0
         distances.put(start, 0.0);
-        pq.offer(new NodeDistance(mapNodo.get(start), 0.0));
+        // Asegurarse de que mapNodo.get(start) no sea null
+        Nodo startNode = mapNodo.get(start);
+        if (startNode == null) {
+            System.out.println("Error: El nodo de inicio con ID " + start + " es null en el mapa.");
+            return new ArrayList<>();
+        }
+        pq.offer(new NodeDistance(startNode, 0.0));
+
 
         while (!pq.isEmpty()) {
             NodeDistance current = pq.poll();
             Nodo currentNode = current.node;
+
+            // Verificación adicional de nulidad
+            if (currentNode == null) continue;
             int currentId = currentNode.getId();
 
-            // Skip if already visited
             if (visited.contains(currentId)) {
                 continue;
             }
-
             visited.add(currentId);
 
-            // If we reached the destination, we can stop
             if (currentId == end) {
                 break;
             }
 
-            // Check all adjacent nodes
             ArrayList<Nodo> adjacencies = currentNode.getDestino();
             if (adjacencies != null) {
                 for (Nodo neighbor : adjacencies) {
+                    if (neighbor == null) continue; // Saltar vecinos nulos
                     int neighborId = neighbor.getId();
 
                     if (visited.contains(neighborId)) {
                         continue;
                     }
 
-                    // Calculate time
-                    double travelTime = getTimeBetweenNodesInMinutes(
-                            currentNode, neighbor, baseSpeed, hour
-                    );
+                    double travelTime = getTimeBetweenNodesInMinutes(currentNode, neighbor, baseSpeed, hour);
+                    if (travelTime == Double.MAX_VALUE) continue; // No se puede viajar entre estos nodos
+
                     double newDistance = distances.get(currentId) + travelTime;
 
-                    // If we found a shorter path, update it
-                    if (newDistance < distances.get(neighborId)) {
+                    if (newDistance < distances.getOrDefault(neighborId, Double.MAX_VALUE)) {
                         distances.put(neighborId, newDistance);
                         previous.put(neighborId, currentNode);
                         pq.offer(new NodeDistance(neighbor, newDistance));
@@ -163,99 +172,112 @@ public class Graph {
                 }
             }
         }
-
-        // Reconstruct path from end to start
         return reconstructPath(previous, start, end);
     }
 
     private List<Nodo> reconstructPath(Map<Integer, Nodo> previous, int start, int end) {
-        List<Nodo> path = new ArrayList<>();
-        Integer current = end;
+        List<Nodo> path = new LinkedList<>(); // Usar LinkedList para inserción eficiente al principio
+        Integer currentId = end;
 
-        // Build path backwards from end to start
-        while (current != null) {
-            if (current == start) {
-                path.add(mapNodo.get(start));
-                break;
+        while (currentId != null) {
+            Nodo currentNode = mapNodo.get(currentId);
+            if (currentNode == null) { // El ID no está en el mapa, ruta rota
+                System.out.println("Error de reconstrucción: Nodo con ID " + currentId + " no encontrado.");
+                return new ArrayList<>(); // Ruta inválida
+            }
+            path.add(0, currentNode); // Añadir al principio
+
+            if (currentId.equals(start)) {
+                break; // Hemos llegado al inicio
             }
 
-            Nodo prevNode = previous.get(current);
+            Nodo prevNode = previous.get(currentId);
             if (prevNode == null) {
-                // No path exists
-                System.out.println("No path found between nodes " + start + " and " + end);
-                return new ArrayList<>();
+                if (!currentId.equals(start)) { // Si no es el inicio y no hay previo, no hay ruta
+                    System.out.println("No se encontró un camino completo entre los nodos " + start + " y " + end + ". Detenido en " + currentId);
+                    return new ArrayList<>(); // Ruta incompleta
+                }
+                break; // Debería haber sido capturado por la condición anterior (currentId.equals(start))
             }
-
-            path.add(mapNodo.get(current));
-            current = prevNode.getId();
+            currentId = prevNode.getId();
         }
 
-        // Reverse to get path from start to end
-        Collections.reverse(path);
+        // Verificar si el primer nodo en el path es el nodo de inicio
+        if (path.isEmpty() || path.get(0).getId() != start) {
+            System.out.println("No se pudo reconstruir la ruta desde " + start + " hasta " + end + " (el camino no comienza en el nodo de inicio).");
+            return new ArrayList<>();
+        }
+
         return path;
     }
 
     public void findAndPrintShortestPath(int startId, int endId, double baseSpeed, int hour) {
-        System.out.println("\n=== FINDING SHORTEST PATH ===");
-        System.out.println("From: " + startId + " To: " + endId);
-        System.out.println("Base Speed: " + baseSpeed + " km/h, Hour: " + hour);
+        System.out.println("\n=== BUSCANDO RUTA MÁS CORTA ===");
+        System.out.println("Desde: " + startId + " Hasta: " + endId);
+        System.out.println("Velocidad Base: " + baseSpeed + " km/h, Hora: " + hour + ":00");
 
         List<Nodo> shortestPath = dijkstraResolution(startId, endId, baseSpeed, hour);
 
         if (shortestPath.isEmpty()) {
-            System.out.println("No path found between the nodes!");
+            System.out.println("¡No se encontró ruta entre los nodos!");
             return;
         }
 
-        System.out.println("\n--- SHORTEST PATH FOUND ---");
+        System.out.println("\n--- RUTA MÁS CORTA ENCONTRADA ---");
         double totalTime = 0.0;
+        Nodo previousNodeInPath = null;
 
         for (int i = 0; i < shortestPath.size(); i++) {
             Nodo node = shortestPath.get(i);
-            System.out.println((i + 1) + ". " + node.getNombre() +
-                    " (ID: " + node.getId() +
-                    ", Type: " + node.getType() + ")");
-
-            // Calculate time to next node
-            if (i < shortestPath.size() - 1) {
-                Nodo nextNode = shortestPath.get(i + 1);
-                double segmentTime = getTimeBetweenNodesInMinutes(node, nextNode, baseSpeed, hour);
-                totalTime += segmentTime;
-                System.out.println("   → Time to next: " + String.format("%.2f", segmentTime) + " minutes");
+            if (node == null) {
+                System.out.println("Error: Nodo nulo encontrado en la ruta.");
+                continue;
             }
+            System.out.print((i + 1) + ". " + node.getNombre() +
+                    " (ID: " + node.getId() +
+                    ", Tipo: " + (node.getType() != null ? node.getType().toString() : "N/A") + ")");
+
+            if (i > 0 && previousNodeInPath != null) {
+                double segmentTime = getTimeBetweenNodesInMinutes(previousNodeInPath, node, baseSpeed, hour);
+                totalTime += segmentTime;
+                System.out.println("   → Tiempo desde anterior: " + String.format("%.2f", segmentTime) + " minutos");
+            } else if (i == 0) {
+                System.out.println(" (Inicio de la ruta)");
+            }
+            previousNodeInPath = node;
         }
 
-        System.out.println("\nTotal travel time: " + String.format("%.2f", totalTime) + " minutes");
-        System.out.println("=== END PATH ===\n");
+        System.out.println("\nTiempo total de viaje estimado: " + String.format("%.2f", totalTime) + " minutos");
+        System.out.println("=== FIN DE LA RUTA ===\n");
     }
 
 
     public void getInfoCSVNodo(File archive){
-        /*
-        1- Lee los CSV de Resources y guarda los datos en HashMaps a travez de la Clase "ReadFileCSV"
-        2- Cada CSV se guarda en Hashmaps distintos
-         */
-
         mapNodo = mapBase.readCSVNodo(archive);
-
-        /* //Logica basica para mostrar la info en los HashMaps
-        ReadFileCSV mapita = new ReadFileCSV();
-        HashMap<Integer, Nodo> mapNodo = mapita.readCSVNodo();
-        HashMap<Integer, Integer> mapAdyacencia = mapita.readCSVAdyacencia();
-
-        System.out.println("[InfoMain001]"+ mapNodo.keySet()); //Este Muestra todos los Key del HashMap
-        System.out.println("[InfoMain002]"+ mapNodo.values()); //Este Muestra todos los Values del HashMap
-
-        System.out.println("[InfoMain003]"+mapAdyacencia.keySet()); //Lo mismo que arriba
-        System.out.println("[InfoMain004]"+mapAdyacencia.values()); //Lo mismo que arriba
-         */
+        if (mapNodo == null) {
+            System.err.println("Error: mapNodo es null después de leer el CSV de nodos.");
+            mapNodo = new HashMap<>(); // Inicializar para evitar NullPointerExceptions posteriores
+        }
     }
 
     public void getInfoCSVAdyacencia(File archive){
-        mapNodo = mapBase.readCSVAdyacencia(archive);
+        // Esta llamada asume que mapBase.readCSVAdyacencia MODIFICA el mapitaNodo
+        // que fue previamente poblado por readCSVNodo y luego retorna esa misma instancia.
+        // O, si ReadFileCSV crea una nueva instancia de mapitaNodo cada vez,
+        // entonces necesitarías pasarle el mapNodo actual para que lo modifique.
+        // La implementación actual de ReadFileCSV usa una instancia `mapitaNodo`
+        // que se inicializa en su constructor. Si usas la misma instancia de `mapBase`, está bien.
+        HashMap<Integer, Nodo> updatedMap = mapBase.readCSVAdyacencia(archive, this.mapNodo); // Modificado para pasar el mapa actual
 
-        for (Nodo node : mapNodo.values()) {
-            System.out.println(node.toString());
+        if (updatedMap != null) {
+            this.mapNodo = updatedMap; // Asignar el mapa posiblemente actualizado
+            // Solo para depuración, puedes quitarlo después
+            // System.out.println("Nodos después de cargar adyacencias:");
+            // for (Nodo node : mapNodo.values()) {
+            //     System.out.println("Nodo ID: " + node.getId() + ", Destinos: " + (node.getDestino() != null ? node.getDestino().size() : "null"));
+            // }
+        } else {
+            System.err.println("Error: readCSVAdyacencia retornó null.");
         }
     }
 }
