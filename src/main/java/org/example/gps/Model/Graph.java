@@ -1,6 +1,6 @@
 package org.example.gps.Model;
 
-import org.example.gps.Utils.DestinationTypes;
+import org.example.gps.Utils.*;
 import java.io.File;
 import java.time.LocalDate;
 import java.util.*;
@@ -238,7 +238,8 @@ public class Graph {
 
         mapNodo = mapBase.readCSVNodo(archive);
 
-        /* //Logica basica para mostrar la info en los HashMaps
+        //Logica basica para mostrar la info en los HashMaps
+        /*
         ReadFileCSV mapita = new ReadFileCSV();
         HashMap<Integer, Nodo> mapNodo = mapita.readCSVNodo();
         HashMap<Integer, Integer> mapAdyacencia = mapita.readCSVAdyacencia();
@@ -257,5 +258,44 @@ public class Graph {
         for (Nodo node : mapNodo.values()) {
             System.out.println(node.toString());
         }
+    }
+
+    public Graph clone(){
+        Graph graphClone = new Graph();
+        HashMap<Integer, Nodo> mapNodoClone = new HashMap<>();
+
+        //Clonamos solo los nodos sin sus adyacencias
+        for(Nodo original : mapNodo.values()){
+            Nodo copia = new Nodo(
+                    original.getId(),
+                    original.getNombre(),
+                    original.getType(),
+                    original.getLatitud(),
+                    original.getLongitud(),
+                    original.getAltura()
+            );
+            mapNodoClone.put(copia.getId(),copia);
+        }
+
+        //Clonamos las adyacencias
+        for(Nodo original : mapNodo.values()){
+            Nodo nodeCloned = mapNodoClone.get(original.getId());
+
+            for(Nodo destinoOriginal : original.getDestino()){
+                Nodo destinoCloned = mapNodoClone.get(destinoOriginal.getId());
+
+                if(destinoCloned != null){
+                    nodeCloned.pushDestino(destinoCloned);
+                }
+            }
+        }
+
+        graphClone.mapNodo = mapNodoClone;
+
+        return graphClone;
+    }
+
+    public HashMap<Integer, Nodo> getMapNodo(){
+        return mapNodo;
     }
 }
