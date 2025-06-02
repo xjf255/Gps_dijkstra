@@ -18,6 +18,7 @@ public class AlgorithmYen {
     File nodos = new File("src/main/resources/mocks/nodos_grafo_umg_torre_tigo_PRUEBA.csv");
     File adyacencias = new File("src/main/resources/mocks/adyacencias_grafo_umg_torre_tigo_PRUEBA.csv");
 
+    //Se le mandan desde donde se quiere empezar, a donde se quiere llegar y el resto de esa informacion para poder calcular las posibles otras rutas
     public AlgorithmYen(int start, int end, double speed, int hour){
         this.graph = new Graph();
         this.mapPaths = new HashMap<>();
@@ -36,14 +37,20 @@ public class AlgorithmYen {
         mapPaths.put(1, pathOne);
     }
 
+    //Se le envia la cantidad de otras rutas se puede aplicar
     public void findOthersPaths(int x){
+        if(x == 1){
+            System.out.println("[INFYEN06]Ingrese un numero igual o mayor a 2 para mostrarle rutas alternas");
+            return;
+        }
+
         List<Nodo> previousPath = mapPaths.get(1);
         System.out.println("[INFYEN02]PreviousPath:"+previousPath);
 
         for(int i=2;i<=x;i++){
-            System.out.println("DEBUG01: entra aqui?");
+            //System.out.println("DEBUG01: entra aqui?");
             Graph graphClone = graph.clone();
-            //ver por que se pone .size()-1
+
             for(int j=0;j<previousPath.size()-1;j++){
                 int idOrigin = previousPath.get(j).getId();
                 int idDestino = previousPath.get(j+1).getId();
@@ -62,9 +69,11 @@ public class AlgorithmYen {
              }
 
              System.out.println("[INFYEN03]PreviousPath:"+newPath);
-             mapPaths.put(i,newPath);
-             previousPath = newPath;
-            System.out.println("[INFYEN05]\n"+printAllPaths());
+             if(!isDuplicate(newPath)){
+                 mapPaths.put(i,newPath);
+                 previousPath = newPath;
+                 System.out.println("[INFYEN05]\n"+printAllPaths());
+             }
         }
     }
 
@@ -85,5 +94,20 @@ public class AlgorithmYen {
             }
         }
         return stringPaths.toString();
+    }
+
+    public boolean isDuplicate(List<Nodo> path){
+        for(List<Nodo> existPath : mapPaths.values()){
+            if(existPath.size() != path.size()) continue;
+            boolean same = true;
+            for (int i=0;i<existPath.size();i++){
+                if(existPath.get(i).getId() != path.get(i).getId()){
+                    same = false;
+                    break;
+                }
+            }
+            if(same) return true;
+        }
+        return false;
     }
 }
