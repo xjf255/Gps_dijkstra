@@ -39,6 +39,14 @@ public class Graph {
         return (R * c) / 1000;
     }
 
+    public double getDistanceBetweenNodes(Nodo n1, Nodo n2) {
+        if (n1 == null || n2 == null) {
+            System.err.println("Error: Uno o ambos nodos son null en getDistanceBetweenNodes.");
+            return 0.0; // O podrías lanzar una excepción
+        }
+        return getDistance(n1.getLatitud(), n1.getLongitud(), n2.getLatitud(), n2.getLongitud());
+    }
+
     private String getDay() {
         LocalDate today = LocalDate.now();
         return today.getDayOfWeek().toString();
@@ -259,6 +267,10 @@ public class Graph {
             mapNodo = new HashMap<>(); // Inicializar para evitar NullPointerExceptions posteriores
         }
     }
+
+
+
+
 
     public void getInfoCSVAdyacencia(File archive){
         // Esta llamada asume que mapBase.readCSVAdyacencia MODIFICA el mapitaNodo

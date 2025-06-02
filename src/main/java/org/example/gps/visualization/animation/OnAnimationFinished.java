@@ -1,4 +1,6 @@
 package org.example.gps.visualization.animation;
 
-public class OnAnimationFinished {
+@FunctionalInterface
+public interface OnAnimationFinished {
+    void execute();
 }
