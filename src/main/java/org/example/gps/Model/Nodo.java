@@ -45,6 +45,10 @@ public class Nodo {
         this.destino.add(destino);
     }
 
+    public void removeDestinoById(int idDestino){
+        destino.removeIf(n -> n.getId() == idDestino);
+    }
+
     public DestinationTypes getType() {
         return type;
     }
