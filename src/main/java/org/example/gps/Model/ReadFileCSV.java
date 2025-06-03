@@ -34,7 +34,7 @@ public class ReadFileCSV {
                  double latitud = Double.parseDouble(split[3]);
                  double longitud = Double.parseDouble(split[4]);
                  double altura = Double.parseDouble(split[5]);
-                 System.out.println("[Info002]"+id+", "+name+", "+type+", "+latitud+", "+longitud+", "+altura);
+                 //System.out.println("[Info002]"+id+", "+name+", "+type+", "+latitud+", "+longitud+", "+altura);
                  nodo = new Nodo(id,name,type,latitud,longitud,altura);
                  mapitaNodo.put(id,nodo);
              }
@@ -43,7 +43,7 @@ public class ReadFileCSV {
              System.out.println("[ERRORFILE001]:"+e);
          } catch (IOException e) {
              System.out.println("[ERRORIO001]"+e);
-         } ;
+         }
          return null;
     }
 
@@ -72,7 +72,7 @@ public class ReadFileCSV {
             System.out.println("[ERRORFILE001]:"+e);
         } catch (IOException e) {
             System.out.println("[ERRORIO001]"+e);
-        } ;
+        }
         return null;
     }
 }
