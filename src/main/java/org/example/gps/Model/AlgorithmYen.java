@@ -14,10 +14,21 @@ public class AlgorithmYen {
     private List<Nodo> pathOne;
     private Map<Integer, List<Nodo>> mapPaths;
 
+    /*
     //Para pruebas, luego se va sin ruta porque dentro de la clase GRAPH se llama a esta clase con los archivos ya cargados
     File nodos = new File("src/main/resources/mocks/nodos_grafo_umg_torre_tigo_PRUEBA.csv");
     File adyacencias = new File("src/main/resources/mocks/adyacencias_grafo_umg_torre_tigo_PRUEBA.csv");
+     */
 
+    //Para cargar los nodos y adyacencias
+    public void loadNodes(File file){
+        graph.getInfoCSVNodo(file);
+    }
+    public void loadAdyacencias(File file){
+        graph.getInfoCSVAdyacencia(file);
+    }
+
+    //Este constructor se tiene que llamar luego de cargar el recorrido (para cargar el recorrido se llama a los metodos de arriba)
     //Se le mandan desde donde se quiere empezar, a donde se quiere llegar y el resto de esa informacion para poder calcular las posibles otras rutas
     public AlgorithmYen(int start, int end, double speed, int hour){
         this.graph = new Graph();
@@ -27,17 +38,18 @@ public class AlgorithmYen {
         this.speed = speed;
         this.hour = hour;
 
+        /*
         //Para poder trabajar y hacer pruebas. Si se implementa dentro del graph, ya tendrian que estar cargados los archivos
         graph.getInfoCSVNodo(nodos);
         graph.getInfoCSVAdyacencia(adyacencias);
+         */
 
-        //Se tendria que cambiar solo el destino que se le manda a dijktra si se cambia la lista de nodos
         //Solo para calcular la ruta mas corta por Dijkstra y guardarla en un Hashmap de las rutas posibles(kPaths)
         this.pathOne = graph.dijkstraResolution(start,end,speed,hour);
         mapPaths.put(1, pathOne);
     }
 
-    //Se le envia la cantidad de otras rutas se puede aplicar
+    //Se le envia la cantidad de otras rutas se desean encontrar
     public void findOthersPaths(int x){
         if(x == 1){
             System.out.println("[INFYEN06]Ingrese un numero igual o mayor a 2 para mostrarle rutas alternas");

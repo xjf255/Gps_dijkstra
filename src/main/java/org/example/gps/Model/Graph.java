@@ -232,8 +232,7 @@ public class Graph {
 
     public void getInfoCSVNodo(File archive){
         /*
-        1- Lee los CSV de Resources y guarda los datos en HashMaps a travez de la Clase "ReadFileCSV"
-        2- Cada CSV se guarda en Hashmaps distintos
+            Lee los CSV y guarda los datos en HashMaps a travez de la Clase "ReadFileCSV"
          */
 
         mapNodo = mapBase.readCSVNodo(archive);
@@ -256,7 +255,7 @@ public class Graph {
         mapNodo = mapBase.readCSVAdyacencia(archive);
 
         for (Nodo node : mapNodo.values()) {
-            System.out.println(node.toString());
+            System.out.println("[INFGRAPH001]"+node.toString());
         }
     }
 
