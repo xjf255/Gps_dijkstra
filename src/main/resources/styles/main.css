@@ -1,0 +1,58 @@
+/* styles/main.css o visualization-styles.css */
+.root {
+    -fx-font-family: "Segoe UI", Arial, sans-serif; /* Fuente más moderna */
+    -fx-base: #3c3f41; /* Color base oscuro para tema IntelliJ Darcula like */
+    -fx-background: #2b2b2b;
+    -fx-control-inner-background: #3c3f41;
+    -fx-accent: #007bff; /* Un azul para acentos */
+}
+
+.button {
+    -fx-background-color: #555b60;
+    -fx-text-fill: white;
+    -fx-padding: 6 12;
+    -fx-background-radius: 4;
+    -fx-cursor: hand;
+}
+.button:hover {
+    -fx-background-color: #656b70;
+}
+.button:pressed {
+    -fx-background-color: #454b50;
+}
+
+.text-field {
+    -fx-background-color: #454a4d;
+    -fx-text-fill: #bababa;
+    -fx-prompt-text-fill: #777777;
+    -fx-background-radius: 4;
+    -fx-border-color: #555b60;
+    -fx-border-radius: 4;
+    -fx-padding: 5;
+}
+
+/* Estilos para el Pane que contiene el GraphDisplay, si es necesario */
+/* #graphDisplayPane { ... } */
+
+/* Estilos para VBox y HBox si quieres espaciado o alineación por defecto */
+VBox {
+    -fx-fill-width: true; /* Para que los HBox internos puedan usar el ancho */
+}
+HBox {
+    -fx-alignment: center; /* Centrar los elementos dentro de los HBox */
+}
+
+.alert > .dialog-pane {
+    -fx-background-color: #2b2b2b;
+}
+.alert > .dialog-pane .label{
+    -fx-text-fill: #bababa;
+}
+.alert > .dialog-pane .header-panel {
+    -fx-background-color: #3c3f41;
+}
+.alert > .dialog-pane .header-panel .label {
+    -fx-font-style: italic;
+    -fx-font-size: 1.2em;
+    -fx-text-fill: #0096c9;
+}

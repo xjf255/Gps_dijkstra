@@ -48,7 +48,7 @@ public class ReadFileCSV {
     }
 
     //Para los CSV de Adyacencias
-    public HashMap<Integer, Nodo> readCSVAdyacencia(File archive){
+    public HashMap<Integer, Nodo> readCSVAdyacencia(File archive, HashMap<Integer, Nodo> mapNodo){
 
         try(BufferedReader br = new BufferedReader(new FileReader(archive))) {
             String line;
