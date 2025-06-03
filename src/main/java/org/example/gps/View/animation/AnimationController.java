@@ -1,6 +1,5 @@
-package org.example.gps.visualization.animation;
+package org.example.gps.View.animation;
 
-import javafx.application.Platform;
 import javafx.scene.control.Button; // Si vas a añadir botones de control
 
 public class AnimationController {

@@ -1,4 +1,4 @@
-package org.example.gps.visualization;
+package org.example.gps.View;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;

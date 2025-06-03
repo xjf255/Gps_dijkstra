@@ -1,7 +1,7 @@
-package org.example.gps.visualization.animation; // Asegúrate que el paquete sea el correcto
+package org.example.gps.View.animation; // Asegúrate que el paquete sea el correcto
 
 import javafx.application.Platform;
-import org.example.gps.visualization.GraphDisplay;
+import org.example.gps.View.GraphDisplay;
 
 public abstract class BasedGraphAnimation implements Runnable {
     protected GraphDisplay graphDisplay;

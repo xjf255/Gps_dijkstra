@@ -14,13 +14,12 @@ import javafx.stage.Stage;
 
 import org.example.gps.Model.Graph;
 import org.example.gps.Model.Nodo;
-import org.example.gps.Utils.DestinationTypes;
 
-import org.example.gps.visualization.GraphDisplay;
-import org.example.gps.visualization.VisualVertex;
-import org.example.gps.visualization.VisualDirectedEdge;
-import org.example.gps.visualization.animation.AnimationController;
-import org.example.gps.visualization.animation.PathAnimation;
+import org.example.gps.View.GraphDisplay;
+import org.example.gps.View.VisualVertex;
+import org.example.gps.View.VisualDirectedEdge;
+import org.example.gps.View.animation.AnimationController;
+import org.example.gps.View.animation.PathAnimation;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -38,6 +37,8 @@ public class ViewController {
     private TextField startNodeField;
     @FXML
     private TextField endNodeField;
+    @FXML
+    private TextField velocityField;
     @FXML
     private Label totalTimeLabel;
     @FXML
@@ -192,7 +193,13 @@ public class ViewController {
         }
         try {
             int startId = Integer.parseInt(startNodeField.getText()); int endId = Integer.parseInt(endNodeField.getText());
-            double baseSpeed = 60; int hour = 12;
+            double baseSpeed;
+            try {
+                baseSpeed = Double.parseDouble(velocityField.getText());
+            } catch (NumberFormatException e) {
+                baseSpeed = 20.0;
+            }
+            int hour = 12;
             List<Nodo> path = gpsGraphLogic.dijkstraResolution(startId, endId, baseSpeed, hour);
             if (path == null || path.isEmpty()) {
                 showAlert("Ruta", "No se encontró ruta."); gpsGraphLogic.findAndPrintShortestPath(startId, endId, baseSpeed, hour);

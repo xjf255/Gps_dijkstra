@@ -29,6 +29,7 @@
     <HBox alignment="CENTER" spacing="10" style="-fx-padding: 5 0 0 0;">
         <TextField fx:id="startNodeField" promptText="ID Nodo Inicio" prefWidth="120"/>
         <TextField fx:id="endNodeField" promptText="ID Nodo Fin" prefWidth="120"/>
+        <TextField fx:id="velocityField" promptText="20km/h" prefWidth="120"/>
         <Button onAction="#onFindRuta" text="Buscar Ruta"/>
     </HBox>
 </VBox>

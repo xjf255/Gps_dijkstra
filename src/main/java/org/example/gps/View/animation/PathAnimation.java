@@ -1,10 +1,10 @@
-package org.example.gps.visualization.animation;
+package org.example.gps.View.animation;
 
 import javafx.application.Platform; // <--- 1. AÑADE ESTE IMPORT
 import javafx.scene.paint.Color;
-import org.example.gps.visualization.GraphDisplay;
-import org.example.gps.visualization.VisualEdge;
-import org.example.gps.visualization.VisualVertex;
+import org.example.gps.View.GraphDisplay;
+import org.example.gps.View.VisualEdge;
+import org.example.gps.View.VisualVertex;
 
 import java.util.ArrayList;
 import java.util.List;

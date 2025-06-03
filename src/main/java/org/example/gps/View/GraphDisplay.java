@@ -1,4 +1,4 @@
-package org.example.gps.visualization;
+package org.example.gps.View;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
