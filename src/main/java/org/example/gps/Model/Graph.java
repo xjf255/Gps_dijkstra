@@ -20,11 +20,9 @@ public class Graph {
         DAY_TRAFFIC_MULTIPLIER.put("SUNDAY", 1.0);
     }
 
-    // MÉTODO GETTER AÑADIDO AQUÍ
     public HashMap<Integer, Nodo> getMapNodo() {
         return this.mapNodo;
     }
-    // FIN DEL MÉTODO GETTER AÑADIDO
 
     private double getDistance(double lat1, double lon1, double lat2, double lon2) {
         double R = 6371e3; // metres
@@ -322,9 +320,5 @@ public class Graph {
         graphClone.mapNodo = mapNodoClone;
 
         return graphClone;
-    }
-
-    public HashMap<Integer, Nodo> getMapNodo(){
-        return mapNodo;
     }
 }
