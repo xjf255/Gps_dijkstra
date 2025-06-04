@@ -6,6 +6,7 @@ import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
+import javafx.scene.control.Spinner;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
@@ -45,6 +46,10 @@ public class ViewController {
     private Label totalTimeLabel;
     @FXML
     private Label totalDistanceLabel;
+    @FXML
+    private Spinner<Integer> hourSpinner;
+    @FXML
+    private Spinner<Integer> minuteSpinner;
 
     private GraphDisplay graphDisplay;
     private Map<Integer, VisualVertex> visualNodeMap = new HashMap<>();
@@ -202,7 +207,8 @@ public class ViewController {
             } catch (NumberFormatException e) {
                 baseSpeed = 20.0;
             }
-            int hour = 12;
+            int hour = hourSpinner.getValue();
+            System.out.println(hour);
             List<Nodo> path = gpsGraphLogic.dijkstraResolution(startId, endId, baseSpeed, hour);
             OtherPathsMap = OtherPaths.findOthersPaths(startId,endId,baseSpeed,hour);
             if (path == null || path.isEmpty()) {
