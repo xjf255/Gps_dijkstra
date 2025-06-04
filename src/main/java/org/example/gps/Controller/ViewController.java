@@ -12,6 +12,7 @@ import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
+import org.example.gps.Model.AlgorithmYen;
 import org.example.gps.Model.Graph;
 import org.example.gps.Model.Nodo;
 
@@ -30,7 +31,8 @@ import java.util.Map;
 
 public class ViewController {
     Graph gpsGraphLogic = new Graph();
-
+    AlgorithmYen OtherPaths = new AlgorithmYen();
+    Map<Integer,List<Nodo>> OtherPathsMap = new HashMap<>();
     @FXML
     private Pane graphDisplayPane;
     @FXML
@@ -192,7 +194,8 @@ public class ViewController {
             return;
         }
         try {
-            int startId = Integer.parseInt(startNodeField.getText()); int endId = Integer.parseInt(endNodeField.getText());
+            int startId = Integer.parseInt(startNodeField.getText());
+            int endId = Integer.parseInt(endNodeField.getText());
             double baseSpeed;
             try {
                 baseSpeed = Double.parseDouble(velocityField.getText());
@@ -201,6 +204,7 @@ public class ViewController {
             }
             int hour = 12;
             List<Nodo> path = gpsGraphLogic.dijkstraResolution(startId, endId, baseSpeed, hour);
+            OtherPathsMap = OtherPaths.findOthersPaths(startId,endId,baseSpeed,hour);
             if (path == null || path.isEmpty()) {
                 showAlert("Ruta", "No se encontró ruta."); gpsGraphLogic.findAndPrintShortestPath(startId, endId, baseSpeed, hour);
                 if (totalTimeLabel != null) totalTimeLabel.setText("Tiempo Total: N/A");
@@ -226,6 +230,114 @@ public class ViewController {
             gpsGraphLogic.findAndPrintShortestPath(startId, endId, baseSpeed, hour);
         } catch (NumberFormatException e) { showAlert("Error", "IDs deben ser números."); setPathControlsDisabled(false);
         } catch (Exception e) { showAlert("Error", "Error: " + e.getMessage()); e.printStackTrace(); setPathControlsDisabled(false); }
+    }
+
+    @FXML
+    private void showAnotherPath(){
+        if(OtherPathsMap.size() > 1){
+            // Detener animación actual si está corriendo
+            if (animationController.isAnimationRunning()) {
+                animationController.stopCurrentAnimation();
+            }
+
+            // Obtener parámetros actuales de los campos
+            if (startNodeField.getText().isEmpty() || endNodeField.getText().isEmpty()) {
+                showAlert("Error", "Debe encontrar una ruta principal primero.");
+                return;
+            }
+
+            try {
+                int startId = Integer.parseInt(startNodeField.getText());
+                int endId = Integer.parseInt(endNodeField.getText());
+                double baseSpeed;
+                try {
+                    baseSpeed = Double.parseDouble(velocityField.getText());
+                } catch (NumberFormatException e) {
+                    baseSpeed = 20.0;
+                }
+                int hour = 12;
+
+                // Obtener una ruta alternativa (excluyendo la primera que sería la óptima)
+                List<Nodo> alternativePath = null;
+                int pathIndex = 1; // Empezar desde la segunda ruta (índice 1)
+
+                // Buscar la primera ruta alternativa disponible
+                for (Map.Entry<Integer, List<Nodo>> entry : OtherPathsMap.entrySet()) {
+                    if (entry.getKey() == pathIndex && entry.getValue() != null && !entry.getValue().isEmpty()) {
+                        alternativePath = entry.getValue();
+                        break;
+                    }
+                    pathIndex++;
+                }
+
+                // Si no hay ruta alternativa disponible, usar cualquier otra ruta del mapa
+                if (alternativePath == null || alternativePath.isEmpty()) {
+                    for (Map.Entry<Integer, List<Nodo>> entry : OtherPathsMap.entrySet()) {
+                        if (entry.getValue() != null && !entry.getValue().isEmpty()) {
+                            alternativePath = entry.getValue();
+                            break;
+                        }
+                    }
+                }
+
+                if (alternativePath == null || alternativePath.isEmpty()) {
+                    showAlert("Ruta Alternativa", "No se encontró ruta alternativa válida.");
+                    return;
+                }
+
+                // Calcular tiempo y distancia de la ruta alternativa
+                double calcTime = 0, calcDist = 0;
+                if (alternativePath.size() > 1) {
+                    for (int i = 0; i < alternativePath.size() - 1; i++) {
+                        calcTime += gpsGraphLogic.getTimeBetweenNodesInMinutes(
+                                alternativePath.get(i), alternativePath.get(i + 1), baseSpeed, hour);
+                        calcDist += gpsGraphLogic.getDistanceBetweenNodes(
+                                alternativePath.get(i), alternativePath.get(i + 1));
+                    }
+                }
+
+                // Actualizar las etiquetas con los datos de la ruta alternativa
+                if (totalTimeLabel != null) {
+                    totalTimeLabel.setText(String.format("Tiempo (Alt): %.2f min", calcTime));
+                }
+                if (totalDistanceLabel != null) {
+                    totalDistanceLabel.setText(String.format("Distancia (Alt): %.2f km", calcDist));
+                }
+
+                // Convertir la ruta a vértices visuales
+                List<VisualVertex> visPath = new ArrayList<>();
+                for (Nodo n : alternativePath) {
+                    if (visualNodeMap.containsKey(n.getId())) {
+                        visPath.add(visualNodeMap.get(n.getId()));
+                    }
+                }
+
+                // Animar la ruta alternativa con colores diferentes
+                if (!visPath.isEmpty()) {
+                    // Usar colores diferentes para distinguir de la ruta principal
+                    PathAnimation pa = new PathAnimation(graphDisplay, visPath,
+                            Color.ORANGE, Color.YELLOW, 300);
+                    setPathControlsDisabled(true);
+                    animationController.startAnimation(pa, () -> setPathControlsDisabled(false));
+                }
+
+                // Imprimir información de la ruta alternativa
+                System.out.println("Mostrando ruta alternativa:");
+                System.out.println("Tiempo: " + String.format("%.2f", calcTime) + " min");
+                System.out.println("Distancia: " + String.format("%.2f", calcDist) + " km");
+
+            } catch (NumberFormatException e) {
+                showAlert("Error", "Error en el formato de los números.");
+            } catch (Exception e) {
+                showAlert("Error", "Error al mostrar ruta alternativa: " + e.getMessage());
+                e.printStackTrace();
+            }
+
+            return;
+        }
+
+        System.out.println("No hay rutas alternativas disponibles (solo " +
+                OtherPathsMap.size() + " ruta(s) encontrada(s))");
     }
 
     private void setPathControlsDisabled(boolean disabled) { if (startNodeField != null) startNodeField.setDisable(disabled); if (endNodeField != null) endNodeField.setDisable(disabled); }

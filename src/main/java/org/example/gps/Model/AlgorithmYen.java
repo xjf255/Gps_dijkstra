@@ -6,10 +6,6 @@ import java.util.List;
 import java.util.Map;
 
 public class AlgorithmYen {
-    private int start;
-    private int end;
-    private double speed;
-    private int hour;
     private Graph graph;
     private List<Nodo> pathOne;
     private Map<Integer, List<Nodo>> mapPaths;
@@ -19,30 +15,27 @@ public class AlgorithmYen {
     File adyacencias = new File("src/main/resources/mocks/adyacencias_grafo_umg_torre_tigo_PRUEBA.csv");
 
     //Se le mandan desde donde se quiere empezar, a donde se quiere llegar y el resto de esa informacion para poder calcular las posibles otras rutas
-    public AlgorithmYen(int start, int end, double speed, int hour){
+    public AlgorithmYen(){
         this.graph = new Graph();
         this.mapPaths = new HashMap<>();
-        this.start = start;
-        this.end = end;
-        this.speed = speed;
-        this.hour = hour;
 
         //Para poder trabajar y hacer pruebas. Si se implementa dentro del graph, ya tendrian que estar cargados los archivos
         graph.getInfoCSVNodo(nodos);
         graph.getInfoCSVAdyacencia(adyacencias);
+    }
+
+    //Se le envia la cantidad de otras rutas se puede aplicar
+    public Map<Integer,List<Nodo>> findOthersPaths(int start, int end, double speed, int hour){
+        int x = 5;
+        if(x == 1){
+            System.out.println("[INFYEN06]Ingrese un numero igual o mayor a 2 para mostrarle rutas alternas");
+            return null;
+        }
 
         //Se tendria que cambiar solo el destino que se le manda a dijktra si se cambia la lista de nodos
         //Solo para calcular la ruta mas corta por Dijkstra y guardarla en un Hashmap de las rutas posibles(kPaths)
         this.pathOne = graph.dijkstraResolution(start,end,speed,hour);
         mapPaths.put(1, pathOne);
-    }
-
-    //Se le envia la cantidad de otras rutas se puede aplicar
-    public void findOthersPaths(int x){
-        if(x == 1){
-            System.out.println("[INFYEN06]Ingrese un numero igual o mayor a 2 para mostrarle rutas alternas");
-            return;
-        }
 
         List<Nodo> previousPath = mapPaths.get(1);
         System.out.println("[INFYEN02]PreviousPath:"+previousPath);
@@ -75,6 +68,7 @@ public class AlgorithmYen {
                  System.out.println("[INFYEN05]\n"+printAllPaths());
              }
         }
+        return mapPaths;
     }
 
     public String printAllPaths(){
