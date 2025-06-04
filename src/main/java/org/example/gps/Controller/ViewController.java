@@ -168,24 +168,34 @@ public class ViewController {
 
     @FXML
     protected void onLoadFile(ActionEvent event) {
-        Stage ps = (Stage) ((Node)event.getSource()).getScene().getWindow(); FileChooser fc = new FileChooser();
-        fc.setTitle("Nodos CSV"); fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("CSV Files", "*.csv"));
+        Stage ps = (Stage) ((Node)event.getSource()).getScene().getWindow();
+        FileChooser fc = new FileChooser();
+        fc.setTitle("Nodos CSV");
+        fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("CSV Files", "*.csv"));
         File file = fc.showOpenDialog(ps);
         if (file != null) {
             gpsGraphLogic.getInfoCSVNodo(file);
-            initialRenderDone = false; Platform.runLater(() -> { if (graphDisplay.canvas.getWidth() > 0) renderGraphFromModel();});
+            OtherPaths.updateGraph(gpsGraphLogic.getMapNodo());
+            initialRenderDone = false;
+            Platform.runLater(() -> { if (graphDisplay.canvas.getWidth() > 0) renderGraphFromModel();});
         }
     }
 
     @FXML
     protected void onLoadAdy(ActionEvent event) {
-        Stage ps = (Stage) ((Node)event.getSource()).getScene().getWindow(); FileChooser fc = new FileChooser();
-        fc.setTitle("Adyacencias CSV"); fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("CSV Files", "*.csv"));
+        Stage ps = (Stage) ((Node)event.getSource()).getScene().getWindow();
+        FileChooser fc = new FileChooser();
+        fc.setTitle("Adyacencias CSV");
+        fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("CSV Files", "*.csv"));
         File file = fc.showOpenDialog(ps);
         if (file != null) {
             if (!isGraphDataLoaded()) { showAlert("Error", "Carga nodos primero."); return; }
             gpsGraphLogic.getInfoCSVAdyacencia(file);
-            initialRenderDone = false; Platform.runLater(() -> { if (graphDisplay.canvas.getWidth() > 0) renderGraphFromModel();});
+            OtherPaths.updateGraph(gpsGraphLogic.getMapNodo());
+            initialRenderDone = false;
+            Platform.runLater(() -> {
+                if (graphDisplay.canvas.getWidth() > 0) renderGraphFromModel();
+            });
         }
     }
 
