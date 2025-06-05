@@ -1,4 +1,4 @@
-package org.example.gps.visualization.animation;
+package org.example.gps.View.animation;
 
 @FunctionalInterface
 public interface OnAnimationFinished {

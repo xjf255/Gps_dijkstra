@@ -1,4 +1,4 @@
-package org.example.gps.visualization;
+package org.example.gps.View;
 
 import javafx.geometry.VPos;
 import javafx.scene.canvas.GraphicsContext;

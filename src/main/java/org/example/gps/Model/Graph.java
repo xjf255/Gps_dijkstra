@@ -184,6 +184,7 @@ public class Graph {
     private List<Nodo> reconstructPath(Map<Integer, Nodo> previous, int start, int end) {
         List<Nodo> path = new LinkedList<>(); // Usar LinkedList para inserción eficiente al principio
         Integer currentId = end;
+        System.out.println("[INFGRAPH01]"+currentId);
 
         while (currentId != null) {
             Nodo currentNode = mapNodo.get(currentId);
@@ -289,10 +290,20 @@ public class Graph {
 
     public Graph clone(){
         Graph graphClone = new Graph();
+
+        if (this.mapNodo == null) {
+            System.err.println("[INFGRAPH02]Error: No se puede clonar un grafo con mapNodo null");
+            graphClone.mapNodo = new HashMap<>();
+            return graphClone;
+        }
+
         HashMap<Integer, Nodo> mapNodoClone = new HashMap<>();
 
         //Clonamos solo los nodos sin sus adyacencias
         for(Nodo original : mapNodo.values()){
+
+            if(original == null) continue;
+
             Nodo copia = new Nodo(
                     original.getId(),
                     original.getNombre(),
@@ -305,20 +316,27 @@ public class Graph {
         }
 
         //Clonamos las adyacencias
-        for(Nodo original : mapNodo.values()){
+        for (Nodo original : mapNodo.values()) {
+            if (original == null || original.getDestino() == null) continue;
+
             Nodo nodeCloned = mapNodoClone.get(original.getId());
+            if (nodeCloned == null) continue;
 
-            for(Nodo destinoOriginal : original.getDestino()){
+            for (Nodo destinoOriginal : original.getDestino()) {
+                if (destinoOriginal == null) continue;
+
                 Nodo destinoCloned = mapNodoClone.get(destinoOriginal.getId());
-
-                if(destinoCloned != null){
+                if (destinoCloned != null) {
                     nodeCloned.pushDestino(destinoCloned);
                 }
             }
         }
 
         graphClone.mapNodo = mapNodoClone;
-
         return graphClone;
+    }
+
+    public void setMapNodo(HashMap<Integer, Nodo> mapNodo){
+        this.mapNodo = mapNodo;
     }
 }

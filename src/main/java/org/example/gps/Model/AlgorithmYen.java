@@ -7,62 +7,73 @@ import java.util.Map;
 import org.example.gps.Model.*;
 
 public class AlgorithmYen {
-    private int start;
-    private int end;
-    private double speed;
-    private int hour;
     private Graph graph;
     private List<Nodo> pathOne;
     private Map<Integer, List<Nodo>> mapPaths;
 
-    /*
-    //Para pruebas, luego se va sin ruta porque dentro de la clase GRAPH se llama a esta clase con los archivos ya cargados
-    File nodos = new File("src/main/resources/mocks/nodos_grafo_umg_torre_tigo_PRUEBA.csv");
-    File adyacencias = new File("src/main/resources/mocks/adyacencias_grafo_umg_torre_tigo_PRUEBA.csv");
-     */
-
-    //Para cargar los nodos y adyacencias
-    public void loadNodes(File file){
-        graph.getInfoCSVNodo(file);
-    }
-    public void loadAdyacencias(File file){
-        graph.getInfoCSVAdyacencia(file);
-    }
-
-    //Este constructor se tiene que llamar luego de cargar el recorrido (para cargar el recorrido se llama a los metodos de arriba)
     //Se le mandan desde donde se quiere empezar, a donde se quiere llegar y el resto de esa informacion para poder calcular las posibles otras rutas
-    public AlgorithmYen(int start, int end, double speed, int hour){
+    public AlgorithmYen(){
         this.graph = new Graph();
         this.mapPaths = new HashMap<>();
-        this.start = start;
-        this.end = end;
-        this.speed = speed;
-        this.hour = hour;
-
-        /*
-        //Para poder trabajar y hacer pruebas. Si se implementa dentro del graph, ya tendrian que estar cargados los archivos
-        graph.getInfoCSVNodo(nodos);
-        graph.getInfoCSVAdyacencia(adyacencias);
-         */
-
-        //Solo para calcular la ruta mas corta por Dijkstra y guardarla en un Hashmap de las rutas posibles(kPaths)
-        this.pathOne = graph.dijkstraResolution(start,end,speed,hour);
-        mapPaths.put(1, pathOne);
     }
 
-    //Se le envia la cantidad de otras rutas se desean encontrar
-    public void findOthersPaths(int x){
+    public AlgorithmYen(HashMap<Integer, Nodo> mapNodo) {
+        this.graph = new Graph();
+        this.mapPaths = new HashMap<>();
+
+        // Verificar que mapNodo no sea null antes de asignarlo
+        if (mapNodo != null) {
+            graph.setMapNodo(mapNodo);
+        }
+    }
+
+    // Método para actualizar el grafo cuando se carguen los datos
+    public void updateGraph(HashMap<Integer, Nodo> mapNodo) {
+        if (mapNodo != null) {
+            this.graph.setMapNodo(mapNodo);
+        }
+    }
+
+    //Se le envia la cantidad de otras rutas se puede aplicar
+    public Map<Integer,List<Nodo>> findOthersPaths(int start, int end, double speed, int hour){
+        if (graph.getMapNodo() == null || graph.getMapNodo().isEmpty()) {
+            System.err.println("[ERRORYEN00] El grafo no tiene datos cargados.");
+            return new HashMap<>();
+        }
+
+        int x = 5;
         if(x == 1){
             System.out.println("[INFYEN06]Ingrese un numero igual o mayor a 2 para mostrarle rutas alternas");
-            return;
+            return null;
         }
+
+        this.mapPaths.clear();
+
+        this.pathOne = graph.dijkstraResolution(start,end,speed,hour);
+
+        if (pathOne == null || pathOne.isEmpty()) {
+            System.out.println("[ERRORYEN00] No se pudo encontrar la ruta principal.");
+            return new HashMap<>();
+        }
+
+        mapPaths.put(1, pathOne);
 
         List<Nodo> previousPath = mapPaths.get(1);
         System.out.println("[INFYEN02]PreviousPath:"+previousPath);
 
         for(int i=2;i<=x;i++){
-            //System.out.println("DEBUG01: entra aqui?");
+            // Verificar que previousPath no sea null o vacío
+            if (previousPath == null || previousPath.size() < 2) {
+                System.out.println("[ERRORYEN02] Ruta anterior inválida para continuar búsqueda.");
+                break;
+            }
+
             Graph graphClone = graph.clone();
+
+            if (graphClone == null || graphClone.getMapNodo() == null) {
+                System.out.println("[ERRORYEN03] Error al clonar el grafo.");
+                break;
+            }
 
             for(int j=0;j<previousPath.size()-1;j++){
                 int idOrigin = previousPath.get(j).getId();
@@ -88,6 +99,7 @@ public class AlgorithmYen {
                  System.out.println("[INFYEN05]\n"+printAllPaths());
              }
         }
+        return mapPaths;
     }
 
     public String printAllPaths(){
