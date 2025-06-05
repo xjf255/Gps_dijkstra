@@ -352,6 +352,33 @@ public class ViewController {
                     }
                 }
 
+                // PopUp show the paths
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Caminos Alternos");
+                alert.setHeaderText(null);
+
+                // Contenido con scroll
+                Label contenido = new Label(OtherPaths.printAllPaths());
+                contenido.setWrapText(true);
+
+                ScrollPane scrollPane = new ScrollPane(contenido);
+                scrollPane.setFitToWidth(true);
+                scrollPane.setPrefViewportHeight(300); // Puedes ajustar la altura visible
+                scrollPane.setPrefViewportWidth(500);  // Y el ancho también
+
+                alert.getDialogPane().setContent(scrollPane);
+                alert.show();
+                // Centrar el Alert luego de mostrarlo
+                Platform.runLater(() -> {
+                    Stage alertStage = (Stage) alert.getDialogPane().getScene().getWindow();
+
+                    double screenWidth = javafx.stage.Screen.getPrimary().getBounds().getWidth();
+                    double alertWidth = alertStage.getWidth();
+
+                    alertStage.setX((screenWidth - alertWidth) / 2);
+                    alertStage.setY(100); // Centrado horizontal, tope vertical
+                });
+
                 // Animar la ruta alternativa con colores diferentes
                 if (!visPath.isEmpty()) {
                     // Usar colores diferentes para distinguir de la ruta principal
@@ -379,32 +406,6 @@ public class ViewController {
         System.out.println("No hay rutas alternativas disponibles (solo " +
                 OtherPathsMap.size() + " ruta(s) encontrada(s))");
 
-        // PopUp show the paths
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Caminos Alternos");
-        alert.setHeaderText(null);
-
-        // Contenido con scroll
-        Label contenido = new Label(OtherPaths.printAllPaths());
-        contenido.setWrapText(true);
-
-        ScrollPane scrollPane = new ScrollPane(contenido);
-        scrollPane.setFitToWidth(true);
-        scrollPane.setPrefViewportHeight(300); // Puedes ajustar la altura visible
-        scrollPane.setPrefViewportWidth(500);  // Y el ancho también
-
-        alert.getDialogPane().setContent(scrollPane);
-        alert.show();
-        // Centrar el Alert luego de mostrarlo
-        Platform.runLater(() -> {
-            Stage alertStage = (Stage) alert.getDialogPane().getScene().getWindow();
-
-            double screenWidth = javafx.stage.Screen.getPrimary().getBounds().getWidth();
-            double alertWidth = alertStage.getWidth();
-
-            alertStage.setX((screenWidth - alertWidth) / 2);
-            alertStage.setY(100); // Centrado horizontal, tope vertical
-        });
     }
 
     private void setPathControlsDisabled(boolean disabled) { if (startNodeField != null) startNodeField.setDisable(disabled); if (endNodeField != null) endNodeField.setDisable(disabled); }
