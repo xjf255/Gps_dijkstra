@@ -4,18 +4,13 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Label;
-import javafx.scene.control.Spinner;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
-import org.example.gps.Model.AlgorithmYen;
-import org.example.gps.Model.Graph;
-import org.example.gps.Model.Nodo;
+import org.example.gps.Model.*;
 
 import org.example.gps.View.GraphDisplay;
 import org.example.gps.View.VisualVertex;
@@ -221,6 +216,35 @@ public class ViewController {
             System.out.println(hour);
             List<Nodo> path = gpsGraphLogic.dijkstraResolution(startId, endId, baseSpeed, hour);
             OtherPathsMap = OtherPaths.findOthersPaths(startId,endId,baseSpeed,hour);
+
+            // PopUp show the paths
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Caminos");
+            alert.setHeaderText(null);
+
+            // Contenido con scroll
+            Label contenido = new Label(OtherPaths.printAllPaths());
+            contenido.setWrapText(true);
+
+            ScrollPane scrollPane = new ScrollPane(contenido);
+            scrollPane.setFitToWidth(true);
+            scrollPane.setPrefViewportHeight(300); // Puedes ajustar la altura visible
+            scrollPane.setPrefViewportWidth(500);  // Y el ancho también
+
+            alert.getDialogPane().setContent(scrollPane);
+            alert.show();
+            // Centrar el Alert luego de mostrarlo
+            Platform.runLater(() -> {
+                Stage alertStage = (Stage) alert.getDialogPane().getScene().getWindow();
+
+                double screenWidth = javafx.stage.Screen.getPrimary().getBounds().getWidth();
+                double alertWidth = alertStage.getWidth();
+
+                alertStage.setX((screenWidth - alertWidth) / 2);
+                alertStage.setY(100); // Centrado horizontal, tope vertical
+            });
+
+
             if (path == null || path.isEmpty()) {
                 showAlert("Ruta", "No se encontró ruta."); gpsGraphLogic.findAndPrintShortestPath(startId, endId, baseSpeed, hour);
                 if (totalTimeLabel != null) totalTimeLabel.setText("Tiempo Total: N/A");
@@ -354,6 +378,33 @@ public class ViewController {
 
         System.out.println("No hay rutas alternativas disponibles (solo " +
                 OtherPathsMap.size() + " ruta(s) encontrada(s))");
+
+        // PopUp show the paths
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Caminos Alternos");
+        alert.setHeaderText(null);
+
+        // Contenido con scroll
+        Label contenido = new Label(OtherPaths.printAllPaths());
+        contenido.setWrapText(true);
+
+        ScrollPane scrollPane = new ScrollPane(contenido);
+        scrollPane.setFitToWidth(true);
+        scrollPane.setPrefViewportHeight(300); // Puedes ajustar la altura visible
+        scrollPane.setPrefViewportWidth(500);  // Y el ancho también
+
+        alert.getDialogPane().setContent(scrollPane);
+        alert.show();
+        // Centrar el Alert luego de mostrarlo
+        Platform.runLater(() -> {
+            Stage alertStage = (Stage) alert.getDialogPane().getScene().getWindow();
+
+            double screenWidth = javafx.stage.Screen.getPrimary().getBounds().getWidth();
+            double alertWidth = alertStage.getWidth();
+
+            alertStage.setX((screenWidth - alertWidth) / 2);
+            alertStage.setY(100); // Centrado horizontal, tope vertical
+        });
     }
 
     private void setPathControlsDisabled(boolean disabled) { if (startNodeField != null) startNodeField.setDisable(disabled); if (endNodeField != null) endNodeField.setDisable(disabled); }

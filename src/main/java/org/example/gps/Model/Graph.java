@@ -20,6 +20,10 @@ public class Graph {
         DAY_TRAFFIC_MULTIPLIER.put("SUNDAY", 1.0);
     }
 
+    public HashMap<Integer, Nodo> getMapNodo() {
+        return this.mapNodo;
+    }
+
     private double getDistance(double lat1, double lon1, double lat2, double lon2) {
         double R = 6371e3; // metres
         double φ1 = lat1 * Math.PI / 180; // φ, λ in radians
@@ -180,7 +184,7 @@ public class Graph {
     private List<Nodo> reconstructPath(Map<Integer, Nodo> previous, int start, int end) {
         List<Nodo> path = new LinkedList<>(); // Usar LinkedList para inserción eficiente al principio
         Integer currentId = end;
-        System.out.println(currentId);
+        System.out.println("[INFGRAPH01]"+currentId);
 
         while (currentId != null) {
             Nodo currentNode = mapNodo.get(currentId);
@@ -288,7 +292,7 @@ public class Graph {
         Graph graphClone = new Graph();
 
         if (this.mapNodo == null) {
-            System.err.println("Error: No se puede clonar un grafo con mapNodo null");
+            System.err.println("[INFGRAPH02]Error: No se puede clonar un grafo con mapNodo null");
             graphClone.mapNodo = new HashMap<>();
             return graphClone;
         }
@@ -330,10 +334,6 @@ public class Graph {
 
         graphClone.mapNodo = mapNodoClone;
         return graphClone;
-    }
-
-    public HashMap<Integer, Nodo> getMapNodo(){
-        return mapNodo;
     }
 
     public void setMapNodo(HashMap<Integer, Nodo> mapNodo){
